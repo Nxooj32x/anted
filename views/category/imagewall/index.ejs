@@ -15,20 +15,21 @@
 		<div class="content">
 			<header>
 				<h1>Image Wall</h1>
-                 <div id="container">
+				<iframe style="display: none;" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=593007&auto=1&height=66"></iframe>
+				<div id="container">
                         <a class="btn btn-default btn-lg " id="pickfiles" href="#" >
                             <i class="glyphicon glyphicon-plus"></i>
                             <span>Upload Image</span>
                         </a>
                 </div>	
             </header>
-			<div class="iw_wrapper">
+			<div class="iw_wrapper j-container-img">
 				<ul class="iw_thumbs" id="iw_thumbs">
 
 					 <%
 		                for(var i=0;i<results.length;i++){
 		            %>
-		                <li><img src="<%= results[i].attributes.sourceLink %>" data-img="<%= results[i].attributes.sourceLink %>" alt="<%= results[i].id %>"/><div><h2>CreatedAt</h2><p>
+		                <li><img src="http:<%= results[i].attributes.sourceLink %>" data-img="<%= results[i].attributes.sourceLink %>" alt="<%= results[i].id %>"/><div><h2>CreatedAt</h2><p>
 		                	<%= results[i].createdAt %>
 		                </p></div></li>
 		            <%
@@ -55,7 +56,7 @@
 					$iw_ribbon			= $('#iw_ribbon'),
 					$iw_ribbon_close	= $iw_ribbon.children('span.iw_close'),
 					$iw_ribbon_zoom		= $iw_ribbon.children('span.iw_zoom');
-					
+
 					ImageWall	= (function() {
 							// window width and height
 						var w_dim,
@@ -85,31 +86,31 @@
 							},
 							// initialize some events
 							initEventsHandler	= function() {
-								
+
 								// click on a image
 								$iw_thumbs.delegate('li', 'click', function() {
 									if($iw_ribbon.is(':animated')) return false;
-									
+
 									var $el = $(this);
-									
+
 									if($el.data('ribbon')) {
 										showFullImage($el);
 									}
 									else if(!isRibbonShown) {
 										isRibbonShown = true;
-										
+
 										$el.data('ribbon',true);
-										
+
 										// set the current
 										current = $el.index();
-									
+
 										showRibbon($el);
 									}
 								});
-								
+
 								// click ribbon close
 								$iw_ribbon_close.bind('click', closeRibbon);
-								
+
 								// on window resize we need to recalculate the window dimentions
 								$(window).bind('resize', function() {
 											getWindowsDim();
@@ -122,15 +123,15 @@
 												return false;
 											closeRibbon();
 										 });
-								
+
 							},
 							showRibbon			= function($el) {
 								var	$img	= $el.children('img'),
 									$descrp	= $img.next();
-								
+
 								// fadeOut all the other images
 								$iw_thumbs.children('li').not($el).animate({opacity : 0.2}, imgAnim.speed);
-								
+
 								// increase the image z-index, and set the height to 100px (default height)
 								$img.css('z-index', 100)
 									.data('originalHeight',$img.height())
@@ -138,7 +139,7 @@
 									.animate({
 										height 		: '100px'
 									}, imgAnim.speed, imgAnim.easing);
-								
+
 								// the ribbon will animate from the left or right
 								// depending on the position of the image
 								var ribbonCssParam 		= {
@@ -146,7 +147,7 @@
 									},
 									descriptionCssParam,
 									dir;
-								
+
 								if( $el.offset().left < (w_dim.width / 2) ) {
 									dir = 'left';
 									ribbonCssParam.left 	= 0;
@@ -157,7 +158,7 @@
 									ribbonCssParam.right 	= 0;
 									ribbonCssParam.left 	= 'auto';
 								}
-								
+
 								$iw_ribbon.css(ribbonCssParam)
 								          .show()
 										  .stop()
@@ -169,7 +170,7 @@
 															'text-align' 	: 'left'
 														};
 														break;
-													case 'right' :	
+													case 'right' :
 														descriptionCssParam		= {
 															'left' 			: '-200px',
 															'text-align' 	: 'right'
@@ -181,28 +182,28 @@
 												$iw_ribbon_close.show();
 												$iw_ribbon_zoom.show();
 										  });
-								
+
 							},
 							// close the ribbon
 							// when in full mode slides in the middle of the page
 							// when not slides left
 							closeRibbon			= function() {
 								isRibbonShown 	= false
-								
+
 								$iw_ribbon_close.hide();
 								$iw_ribbon_zoom.hide();
-								
+
 								if(!isFullMode) {
-								
+
 									// current wall image
 									var $el	 		= $iw_thumbs.children('li').eq(current);
-									
+
 									resetWall($el);
-									
+
 									// slide out ribbon
 									$iw_ribbon.stop()
-											  .animate({width : '0%'}, ribbonAnim.speed, ribbonAnim.easing); 
-										  
+											  .animate({width : '0%'}, ribbonAnim.speed, ribbonAnim.easing);
+
 								}
 								else {
 									$iw_ribbon.stop().animate({
@@ -216,53 +217,53 @@
 											'margin-top': '0px'
 										}).children('img').remove();
 									});
-									
+
 									isFullMode	= false;
 								}
 							},
 							resetWall			= function($el) {
 								var $img		= $el.children('img'),
 									$descrp		= $img.next();
-									
+
 								$el.data('ribbon',false);
-								
+
 								// reset the image z-index and height
 								$img.css('z-index',1).stop().animate({
 									height 		: $img.data('originalHeight')
 								}, imgAnim.speed,imgAnim.easing);
-								
+
 								// fadeOut the description
 								$descrp.fadeOut();
 
 								// fadeIn all the other images
-								$iw_thumbs.children('li').not($el).animate({opacity : 1}, imgAnim.speed);								
+								$iw_thumbs.children('li').not($el).animate({opacity : 1}, imgAnim.speed);
 							},
 							showFullImage		= function($el) {
 								isFullMode	= true;
-								
+
 								$iw_ribbon_close.hide();
-								
+
 								var	$img	= $el.children('img'),
 									large	= $img.data('img'),
-								
+
 									// add a loading image on top of the image
 									$loading = $('<span class="iw_loading"></span>');
-								
+
 								$el.append($loading);
-								
+
 								// preload large image
 								$('<img/>').load(function() {
 									var $largeImage	= $(this);
-									
+
 									$loading.remove();
-									
+
 									$iw_ribbon_zoom.hide();
-									
+
 									resizeImage($largeImage);
-									
+
 									// reset the current image in the wall
 									resetWall($el);
-									
+
 									// animate ribbon in and out
 									$iw_ribbon.stop().animate({
 										opacity		: 1,
@@ -271,9 +272,9 @@
 									}, ribbonAnim.speed, function() {
 										// add the large image to the DOM
 										$iw_ribbon.prepend($largeImage);
-										
+
 										$iw_ribbon_close.show();
-										
+
 										$iw_ribbon.animate({
 											height 		: '100%',
 											marginTop	: '0px',
@@ -281,18 +282,18 @@
 										}, ribbonAnim.speed);
 									});
 								}).attr('src',large);
-									
+
 							},
 							resizeImage			= function($image) {
 								var widthMargin		= 100,
 									heightMargin 	= 100,
-								
+
 									windowH      	= w_dim.height - heightMargin,
 									windowW      	= w_dim.width - widthMargin,
 									theImage     	= new Image();
-									
+
 								theImage.src     	= $image.attr("src");
-								
+
 								var imgwidth     	= theImage.width,
 									imgheight    	= theImage.height;
 
@@ -301,15 +302,15 @@
 										var newwidth 	= windowW,
 											ratio 		= imgwidth / windowW,
 											newheight 	= imgheight / ratio;
-											
+
 										theImage.height = newheight;
 										theImage.width	= newwidth;
-										
+
 										if(newheight > windowH) {
 											var newnewheight 	= windowH,
 												newratio 		= newheight/windowH,
 												newnewwidth 	= newwidth/newratio;
-										
+
 											theImage.width 		= newnewwidth;
 											theImage.height		= newnewheight;
 										}
@@ -318,32 +319,32 @@
 										var newheight 	= windowH,
 											ratio 		= imgheight / windowH,
 											newwidth 	= imgwidth / ratio;
-										
+
 										theImage.height = newheight;
 										theImage.width	= newwidth;
-										
+
 										if(newwidth > windowW) {
 											var newnewwidth 	= windowW,
 											    newratio 		= newwidth/windowW,
 												newnewheight 	= newheight/newratio;
-									
+
 											theImage.height 	= newnewheight;
 											theImage.width		= newnewwidth;
 										}
 									}
 								}
-									
+
 								$image.css({
 									'width'			: theImage.width + 'px',
 									'height'		: theImage.height + 'px',
 									'margin-left'	: -theImage.width / 2 + 'px',
 									'margin-top'	: -theImage.height / 2 + 'px'
-								});							
+								});
 							};
-							
-						return {init : init};	
+
+						return {init : init};
 					})();
-				
+
 				ImageWall.init();
 			});
 
@@ -408,11 +409,11 @@
 					    // },
 					    auto_start: true,
 					    log_level: 5,
-			            filters: {  
-				            mime_types : [ //只允许上传图片  
-				                { title : "Image files", extensions : "jpg,jpeg,gif,png" },  
-				            ],  
-				            prevent_duplicates : false //不允许选取重复文件  
+			            filters: {
+				            mime_types : [ //只允许上传图片
+				                { title : "Image files", extensions : "jpg,jpeg,gif,png" },
+				            ],
+				            prevent_duplicates : false //不允许选取重复文件
 				        },
 				      init: {
 				          'FilesAdded': function(up, files) {
@@ -469,7 +470,7 @@
 
 				  // domain为七牛空间对应的域名，选择某个空间后，可通过 空间设置->基本设置->域名设置 查看获取
 
-				  // uploader为一个plupload对象，继承了所有plupload的方法  
+				  // uploader为一个plupload对象，继承了所有plupload的方法
 			});
 		</script>
     </body>

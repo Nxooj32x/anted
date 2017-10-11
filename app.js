@@ -8,7 +8,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var AV = require('leanengine');
-var filters = require('./routes/filter/filters');
+var filters = require('./routes/filter/Filter');
 
 // 加载云函数定义，你可以将云函数拆分到多个文件方便管理，但需要在主文件中加载它们
 require('./cloud');
@@ -43,7 +43,7 @@ app.use(session({
 ////这里的name值得是cookie的name，默认cookie的name是：connect.sid
   //name: 'hhw',
   secret: 'keyboard cat',
-  cookie: ('name', 'value', { path: '/', httpOnly: true,secure: false, maxAge:  300000 }),
+  cookie: ('name', 'value', { path: '/', httpOnly: true,secure: false, maxAge:  3000000 }),
   //重新保存：强制会话保存即使是未修改的。默认为true但是得写上
   resave: true,
   //强制“未初始化”的会话保存到存储。
@@ -55,21 +55,23 @@ app.get('/', function(req, res) {
 });
 
 // 可以将一类的路由单独保存在一个文件中
-app.use('/todos', require('./routes/todos'));
+app.use('/todos', require('./routes/controller/TodosController'));
 
-app.use('/authentication', require('./routes/authentication'));
+app.use('/authentication', require('./routes/controller/AuthenticationController'));
+
+app.use('/editor',filters.sessionFilter, require('./routes/controller/EditorController'));
 
 app.use('/main',filters.sessionFilter,
-    require('./routes/main')
+    require('./routes/controller/MainController')
 );
 
 
 app.use('/career',filters.sessionFilter,
-    require('./routes/career')
+    require('./routes/controller/CareerController')
 );
 
 app.use('/imagewall',filters.sessionFilter,
-    require('./routes/imagewall')
+    require('./routes/controller/ImagewallController')
 );
 
 
@@ -119,7 +121,7 @@ app.use(function(err, req, res, next) {
   }
   res.status(statusCode);
   // 默认不输出异常详情
-  var error = {}
+  var error = {};
   if (app.get('env') === 'development') {
     // 如果是开发环境，则将异常堆栈输出到页面，方便开发调试
     error = err;
