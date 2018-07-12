@@ -361,8 +361,8 @@
 					  	type:"post",
 					  	data:options,
 					  	success:function(result){
-					  		console.dir(result);
-					  	},
+					  		location.reload();
+						},
 					  	error:function(error){
 
 					  	}
@@ -374,6 +374,8 @@
 					    browse_button: 'pickfiles',
 					    container: 'container',
 					    drop_element: 'container',
+					    unique_names: false,
+					    save_key: false,
 					    max_file_size: '1000mb',
 					    flash_swf_url: 'bower_components/plupload/js/Moxie.swf',
 					    dragdrop: true,
@@ -461,7 +463,7 @@
 				              // 若想在前端对每个文件的key进行个性化处理，可以配置该函数
 				              // 该配置必须要在unique_names: false，save_key: false时才生效
 
-				              var key = guid();
+				              var key = guid()+"-"+file.getNative().name;
 				              // do something with key here
 				              return key;
 				          }
